@@ -93,7 +93,7 @@ for i in range(5000):
         # If no position data, stop the robot
         pipuck.epuck.set_motor_speeds(0, 0)
     
-    time.sleep(1)
+    time.sleep(0.3)
 	
     
 # Stop the MQTT client loop
