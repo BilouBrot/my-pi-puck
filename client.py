@@ -25,8 +25,6 @@ def on_message(client, userdata, msg):
         data = json.loads(msg.payload.decode())
         # Check if the message is a dictionary
         puck_dict.update(data)
-        # Print the updated dictionary
-        print(f"Updated puck_dict: {puck_dict}")
     except json.JSONDecodeError:
         print(f'invalid json: {msg.payload}')
 
@@ -45,33 +43,53 @@ pipuck = PiPuck(epuck_version=2)
 # Set the robot's speed, e.g. with
 # pipuck.epuck.set_motor_speeds(1000,-1000)
 
-def check_bounds(x, y):
-    if x < 0 or x > x_bound:
+def check_bounds(x, y, radius = 0.0):
+    if x < 0 + radius or x > x_bound - radius:
         return False
-    if y < 0 or y > y_bound:
+    if y < 0 + radius or y > y_bound - radius:
         return False
     return True
 
 def get_position():
-    data = puck_dict.get('2')
+    data = puck_dict.get(pi_puck_id)
     if data:
         pos = data.get('position')
         if pos:
             x = pos[0]
             y = pos[1]
-            if check_bounds(x, y):
-                return x, y
-            else:
-                print(f"Position out of bounds: {x}, {y}")
+            return x, y
     else:
         print(f"No data for PiPuck ID: {pi_puck_id}")
     return None, None
+    
 
-for _ in range(1000):
+for i in range(5000):
     # TODO: Do your stuff here
+    # Print the updated dictionary
+    print(f"Updated puck_dict: {puck_dict}")
     # Get the current position of the robot
     x, y = get_position()
     print(f"Current position: {x}, {y}")
+    # drive randomly
+    if x is not None and y is not None:
+        if check_bounds(x, y, radius=0.5):
+            if i % 6 == 0:
+                # turn to the left
+                pipuck.epuck.set_motor_speeds(-1000, 1000)
+                time.sleep(0.5)
+            if i % 6 == 3:
+                # turn to the right
+                pipuck.epuck.set_motor_speeds(1000, -1000)
+                time.sleep(0.5)
+            pipuck.epuck.set_motor_speeds(1000, 1000)
+            
+        else:
+            # turn to the right
+            pipuck.epuck.set_motor_speeds(1000, -1000)
+    else:
+        # If no position data, stop the robot
+        pipuck.epuck.set_motor_speeds(0, 0)
+    
     time.sleep(1)
 	
     
