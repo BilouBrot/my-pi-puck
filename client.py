@@ -53,7 +53,7 @@ def check_bounds(x, y):
     return True
 
 def get_position():
-    data = puck_dict.get(pi_puck_id)
+    data = puck_dict.get('2')
     if data:
         pos = data.get('position')
         if pos:
