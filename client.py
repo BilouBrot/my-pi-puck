@@ -7,6 +7,8 @@ from pipuck.pipuck import PiPuck
 Broker = "192.168.178.56"  # Replace with your broker address
 Port = 1883 # standard MQTT port
 
+puck_dict = {}
+
 # function to handle connection
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code " + str(rc))
@@ -16,6 +18,10 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, msg):
     try:
         data = json.loads(msg.payload.decode())
+        # Check if the message is a dictionary
+        puck_dict.update(data)
+        # Print the updated dictionary
+        print(f"Updated puck_dict: {puck_dict}")
         print(data)
     except json.JSONDecodeError:
         print(f'invalid json: {msg.payload}')
