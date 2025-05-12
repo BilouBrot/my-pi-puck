@@ -73,14 +73,14 @@ for i in range(5000):
     # drive randomly
     if x is not None and y is not None:
         if check_bounds(x, y, radius=0.5):
-            if i % 6 == 0:
-                # turn to the left
-                pipuck.epuck.set_motor_speeds(-1000, 1000)
-                time.sleep(0.5)
-            if i % 6 == 3:
-                # turn to the right
-                pipuck.epuck.set_motor_speeds(1000, -1000)
-                time.sleep(0.5)
+            # if i % 6 == 0:
+            #     # turn to the left
+            #     pipuck.epuck.set_motor_speeds(-1000, 1000)
+            #     time.sleep(0.5)
+            # if i % 6 == 3:
+            #     # turn to the right
+            #     pipuck.epuck.set_motor_speeds(1000, -1000)
+            #     time.sleep(0.5)
             pipuck.epuck.set_motor_speeds(1000, 1000)
             
         else:
