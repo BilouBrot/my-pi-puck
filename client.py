@@ -72,7 +72,7 @@ for i in range(5000):
     print(f"Current position: {x}, {y}")
     # drive randomly
     if x is not None and y is not None:
-        if check_bounds(x, y, radius=0.5):
+        if check_bounds(x, y):
             # if i % 6 == 0:
             #     # turn to the left
             #     pipuck.epuck.set_motor_speeds(-1000, 1000)
