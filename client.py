@@ -89,6 +89,7 @@ for i in range(5000):
             time.sleep(0.5)
             # move forward
             pipuck.epuck.set_motor_speeds(1000, 1000)
+            time.sleep(0.5)
     else:
         # If no position data, stop the robot
         pipuck.epuck.set_motor_speeds(0, 0)
