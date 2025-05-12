@@ -72,20 +72,23 @@ for i in range(5000):
     print(f"Current position: {x}, {y}")
     # drive randomly
     if x is not None and y is not None:
-        if check_bounds(x, y):
-            # if i % 6 == 0:
-            #     # turn to the left
-            #     pipuck.epuck.set_motor_speeds(-1000, 1000)
-            #     time.sleep(0.5)
-            # if i % 6 == 3:
-            #     # turn to the right
-            #     pipuck.epuck.set_motor_speeds(1000, -1000)
-            #     time.sleep(0.5)
+        if check_bounds(x, y, radius=0.1):
+            if i % 6 == 0:
+                # turn to the left
+                pipuck.epuck.set_motor_speeds(-1000, 1000)
+                time.sleep(0.5)
+            if i % 6 == 3:
+                # turn to the right
+                pipuck.epuck.set_motor_speeds(1000, -1000)
+                time.sleep(0.5)
             pipuck.epuck.set_motor_speeds(1000, 1000)
             
         else:
             # turn to the right
             pipuck.epuck.set_motor_speeds(1000, -1000)
+            time.sleep(0.5)
+            # move forward
+            pipuck.epuck.set_motor_speeds(1000, 1000)
     else:
         # If no position data, stop the robot
         pipuck.epuck.set_motor_speeds(0, 0)
