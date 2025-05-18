@@ -88,7 +88,7 @@ def get_position():
 for i in range(99999):
     # TODO: Do your stuff here
     # Print the updated dictionary
-    print(f"Updated puck_dict: {puck_dict}")
+    # print(f"Updated puck_dict: {puck_dict}")
     if new_message[0]:
         # blink = 4
         # if blink % 2 == 0:
@@ -104,16 +104,18 @@ for i in range(99999):
         pipuck.set_leds_rgb(red = False, green = False, blue = False)
     # Get the current position of the robot
     x, y = get_position()
-    print(f"Current position: {x}, {y}")
+    # print(f"Current position: {x}, {y}")
     # drive randomly
     if x is not None and y is not None:
         
         collision = collsion_detected(x, y, radius=0.05)
         
         if collision[0]:
+            print(f"Collision detected at position: {x}, {y}")
             if collision[1] is not None:
                 # send message "Hello" to topic robot/<key>
                 client.publish(f"robot/{collision[1]}", "Hello")
+                print(f"Collision with robot {collision[1]} detected!")
             # turn to the left
             pipuck.epuck.set_motor_speeds(-1000, 1000)
             time.sleep(0.5)
@@ -124,11 +126,9 @@ for i in range(99999):
             if i % 100 == 0:
                 # turn to the left
                 pipuck.epuck.set_motor_speeds(-1000, 1000)
-                time.sleep(0.5)
             if i % 100 == 50:
                 # turn to the right
                 pipuck.epuck.set_motor_speeds(1000, -1000)
-                time.sleep(0.5)
             pipuck.epuck.set_motor_speeds(1000, 1000)
     else:
         # If no position data, stop the robot
