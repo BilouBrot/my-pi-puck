@@ -72,9 +72,8 @@ for i in range(5000):
     # TODO: Do your stuff here
     # Print the updated dictionary
     print(f"Updated puck_dict: {puck_dict}")
-    if new_message:
-        print(f"New message received: {puck_dict}")
-        pipuck.epuck.set_inner_leds(True, True)
+    # if new_message:
+    #     # pipuck.epuck.set_inner_leds()
     # Get the current position of the robot
     x, y = get_position()
     print(f"Current position: {x}, {y}")
