@@ -2,7 +2,6 @@ import paho.mqtt.client as mqtt
 import json
 import time
 from pipuck.pipuck import PiPuck
-import random
 
 # Define variables and callbacks
 Broker = "192.168.178.56"  # Replace with your broker address
@@ -58,74 +57,39 @@ def get_position():
         if pos:
             x = pos[0]
             y = pos[1]
-            angle = data.get('angle')
-            return x, y, angle
+            return x, y
     else:
         print(f"No data for PiPuck ID: {pi_puck_id}")
     return None, None
     
-# Function to get the closest wall
-# Returns 0 for left, 1 for right, 2 for top, 3 for bottom
-def closest_wall(x, y):
-    # Calculate the distance to each wall
-    left_distance = x
-    right_distance = x_bound - x
-    top_distance = y_bound - y
-    bottom_distance = y
-
-    # Find the closest wall
-    distances = [left_distance, right_distance, top_distance, bottom_distance]
-    closest_wall_index = distances.index(min(distances))
-    
-    return closest_wall_index
-# angle == 0 => robot is facing top
-# angle == 90 => robot is facing right
-# angle == 180 => robot is facing bottom
-# angle == 270 => robot is facing left
-# Returns the angle to the wall in degrees
-def get_angle_to_wall(wall_index, angle):
-    # Calculate the angle to the wall based on the wall index and robot's angle
-    if wall_index == 0:  # left wall
-        return (360 - angle) % 180
 
 for i in range(5000):
     # TODO: Do your stuff here
     # Print the updated dictionary
     print(f"Updated puck_dict: {puck_dict}")
     # Get the current position of the robot
-    x, y, angle = get_position()
+    x, y = get_position()
     print(f"Current position: {x}, {y}")
     # drive randomly
     if x is not None and y is not None:
-        if check_bounds(x, y, radius=0.):
-            # randomly choose a direction
-            direction = random.choice(['left', 'right', 'forward'])
-            if direction == 'left':
+        if check_bounds(x, y, radius=0.1):
+            if i % 100 == 0:
                 # turn to the left
-                pipuck.epuck.set_motor_speeds(900, 1000)
-            elif direction == 'right':
+                pipuck.epuck.set_motor_speeds(-1000, 1000)
+                time.sleep(0.5)
+            if i % 100 == 50:
                 # turn to the right
-                pipuck.epuck.set_motor_speeds(1000, 900)
-            else:
-                # move forward
-                pipuck.epuck.set_motor_speeds(1000, 1000)
+                pipuck.epuck.set_motor_speeds(1000, -1000)
+                time.sleep(0.5)
+            pipuck.epuck.set_motor_speeds(1000, 1000)
             
         else:
-            # Get the closest wall
-            wall_index = closest_wall(x, y)
-            # Get the angle to the wall
-            angle_to_wall = get_angle_to_wall(wall_index, angle)
-            print(f"Angle to wall: {angle_to_wall}")
-            # Turn away from the wall
-            # the smaller the angle, the slower the turn
-            if angle_to_wall < 90:
-                pipuck.epuck.set_motor_speeds(1000, 1000)
-            elif angle_to_wall < 180:
-                pipuck.epuck.set_motor_speeds(900, 1000)
-            elif angle_to_wall < 270:
-                pipuck.epuck.set_motor_speeds(1000, 900)
-            else:
-                pipuck.epuck.set_motor_speeds(1000, 1000)
+            # turn to the right
+            pipuck.epuck.set_motor_speeds(1000, -1000)
+            time.sleep(0.5)
+            # move forward
+            pipuck.epuck.set_motor_speeds(1000, 1000)
+            time.sleep(0.5)
     else:
         # If no position data, stop the robot
         pipuck.epuck.set_motor_speeds(0, 0)
