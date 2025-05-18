@@ -99,6 +99,7 @@ for i in range(5000):
         # if blink == 0:
         #     new_message -= 1
         pipuck.set_leds_rgb(red = True, green = False, blue = False)
+        new_message -= 1
     else:
         pipuck.set_leds_rgb(red = False, green = False, blue = False)
     # Get the current position of the robot
