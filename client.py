@@ -11,7 +11,6 @@ x_bound = 2.0
 y_bound = 1.0
 
 puck_dict = {}
-new_message = True
 
 # function to handle connection
 def on_connect(client, userdata, flags, rc):
@@ -21,13 +20,14 @@ def on_connect(client, userdata, flags, rc):
 
 # function to handle incoming messages
 def on_message(client, userdata, msg):
+    global new_message
     try:
         data = json.loads(msg.payload.decode())
         if msg.topic == "robot_pos/all":
             # Check if the message is a dictionary
             puck_dict.update(data)
         elif msg.topic == f"robot/{pi_puck_id}":
-            new_message = True
+            new_message += 1
     except json.JSONDecodeError:
         print(f'invalid json: {msg.payload}')
 
@@ -88,8 +88,7 @@ for i in range(5000):
     # TODO: Do your stuff here
     # Print the updated dictionary
     print(f"Updated puck_dict: {puck_dict}")
-    if new_message:
-        pipuck.epuck.set_inner_leds()
+    pipuck.epuck.set_inner_leds(True, True)
     # Get the current position of the robot
     x, y = get_position()
     print(f"Current position: {x}, {y}")
