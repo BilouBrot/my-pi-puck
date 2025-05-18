@@ -13,18 +13,23 @@ x_pos = 0.0
 y_pos = 0.0
 
 puck_dict = {}
+new_message = True
 
 # function to handle connection
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code " + str(rc))
     client.subscribe("robot_pos/all")
+    client.subscribe(f"robot/{pi_puck_id}")
 
 # function to handle incoming messages
 def on_message(client, userdata, msg):
     try:
         data = json.loads(msg.payload.decode())
-        # Check if the message is a dictionary
-        puck_dict.update(data)
+        if msg.topic == "robot_pos/all":
+            # Check if the message is a dictionary
+            puck_dict.update(data)
+        elif msg.topic == f"robot/{pi_puck_id}":
+            new_message = True
     except json.JSONDecodeError:
         print(f'invalid json: {msg.payload}')
 
@@ -67,12 +72,15 @@ for i in range(5000):
     # TODO: Do your stuff here
     # Print the updated dictionary
     print(f"Updated puck_dict: {puck_dict}")
+    if new_message:
+        print(f"New message received: {puck_dict}")
+        pipuck.set_inner_leds(True, True)
     # Get the current position of the robot
     x, y = get_position()
     print(f"Current position: {x}, {y}")
     # drive randomly
     if x is not None and y is not None:
-        if check_bounds(x, y, radius=0.1):
+        if check_bounds(x, y, radius=0.05):
             if i % 100 == 0:
                 # turn to the left
                 pipuck.epuck.set_motor_speeds(-1000, 1000)
@@ -83,7 +91,7 @@ for i in range(5000):
                 time.sleep(0.5)
             pipuck.epuck.set_motor_speeds(1000, 1000)
             
-        else:
+        if not check_bounds(x, y, radius=0.05):
             # turn to the right
             pipuck.epuck.set_motor_speeds(1000, -1000)
             time.sleep(0.5)
