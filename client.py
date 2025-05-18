@@ -56,9 +56,9 @@ def check_bounds(x, y, radius = 0.0):
 def collsion_detected(x, y, radius = 0.0):
     # Check if the robot is within the bounds of the arena
     if x < 0 + radius or x > x_bound - radius:
-        return True
+        return True, None
     if y < 0 + radius or y > y_bound - radius:
-        return True
+        return True, None
     # Check for collision with other robots
     for key, value in puck_dict.items():
         if key != pi_puck_id:
@@ -68,8 +68,8 @@ def collsion_detected(x, y, radius = 0.0):
                 other_y = pos[1]
                 distance = ((x - other_x) ** 2 + (y - other_y) ** 2) ** 0.5
                 if distance < radius:
-                    return True
-    return False
+                    return True, key
+    return False, None
 
 def get_position():
     data = puck_dict.get(pi_puck_id)
@@ -107,7 +107,13 @@ for i in range(99999):
     print(f"Current position: {x}, {y}")
     # drive randomly
     if x is not None and y is not None:
-        if collsion_detected(x, y, radius=0.05):
+        
+        collision = collsion_detected(x, y, radius=0.05)
+        
+        if collision[0]:
+            if collision[1] is not None:
+                # send message "Hello" to topic robot/<key>
+                client.publish(f"robot/{collision[1]}", "Hello")
             # turn to the left
             pipuck.epuck.set_motor_speeds(-1000, 1000)
             time.sleep(0.5)
