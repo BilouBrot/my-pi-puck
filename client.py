@@ -83,21 +83,22 @@ def get_position():
         print(f"No data for PiPuck ID: {pi_puck_id}")
     return None, None
     
-blink = 0
+# blink = 0
 
 for i in range(5000):
     # TODO: Do your stuff here
     # Print the updated dictionary
     print(f"Updated puck_dict: {puck_dict}")
     if new_message > 0:
-        blink = 4
-        if blink % 2 == 0:
-            pipuck.set_leds_rgb(red = False, green = True, blue = False)
-        else:
-            pipuck.set_leds_rgb(red = True, green = False, blue = False)
-        blink -= 1
-        if blink == 0:
-            new_message -= 1
+        # blink = 4
+        # if blink % 2 == 0:
+        #     pipuck.set_leds_rgb(red = False, green = True, blue = False)
+        # else:
+        #     pipuck.set_leds_rgb(red = True, green = False, blue = False)
+        # blink -= 1
+        # if blink == 0:
+        #     new_message -= 1
+        pipuck.set_leds_rgb(red = True, green = False, blue = False)
     else:
         pipuck.set_leds_rgb(red = False, green = False, blue = False)
     # Get the current position of the robot
