@@ -9,6 +9,7 @@ Port = 1883 # standard MQTT port
 pi_puck_id = '16'
 x_bound = 2.0
 y_bound = 1.0
+new_message = 3
 
 puck_dict = {}
 
@@ -20,7 +21,6 @@ def on_connect(client, userdata, flags, rc):
 
 # function to handle incoming messages
 def on_message(client, userdata, msg):
-    global new_message
     try:
         data = json.loads(msg.payload.decode())
         if msg.topic == "robot_pos/all":
@@ -83,12 +83,23 @@ def get_position():
         print(f"No data for PiPuck ID: {pi_puck_id}")
     return None, None
     
+blink = 0
 
 for i in range(5000):
     # TODO: Do your stuff here
     # Print the updated dictionary
     print(f"Updated puck_dict: {puck_dict}")
-    pipuck.set_leds_rgb(red = True, green = False, blue = False)
+    if new_message > 0:
+        blink = 4
+        if blink % 2 == 0:
+            pipuck.set_leds_rgb(red = False, green = True, blue = False)
+        else:
+            pipuck.set_leds_rgb(red = True, green = False, blue = False)
+        blink -= 1
+        if blink == 0:
+            new_message -= 1
+    else:
+        pipuck.set_leds_rgb(red = False, green = False, blue = False)
     # Get the current position of the robot
     x, y = get_position()
     print(f"Current position: {x}, {y}")
