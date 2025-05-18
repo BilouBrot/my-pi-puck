@@ -79,32 +79,23 @@ def get_position():
         if pos:
             x = pos[0]
             y = pos[1]
-            return x, y
+            angle = data.get('angle')
+            return x, y, angle
     else:
         print(f"No data for PiPuck ID: {pi_puck_id}")
-    return None, None
-    
-# blink = 0
+    return None, None, None
 
 for i in range(99999):
     # TODO: Do your stuff here
     # Print the updated dictionary
     # print(f"Updated puck_dict: {puck_dict}")
     if new_message[0]:
-        # blink = 4
-        # if blink % 2 == 0:
-        #     pipuck.set_leds_rgb(red = False, green = True, blue = False)
-        # else:
-        #     pipuck.set_leds_rgb(red = True, green = False, blue = False)
-        # blink -= 1
-        # if blink == 0:
-        #     new_message -= 1
         pipuck.set_leds_rgb(red = True, green = False, blue = False)
         new_message[0] = False
     else:
         pipuck.set_leds_rgb(red = False, green = False, blue = False)
     # Get the current position of the robot
-    x, y = get_position()
+    x, y, angle = get_position()
     # print(f"Current position: {x}, {y}")
     # drive randomly
     if x is not None and y is not None:
@@ -118,8 +109,12 @@ for i in range(99999):
                 client.publish(f"robot/{collision[1]}", "Hello")
                 print(f"Collision with robot {collision[1]} detected!")
             # turn to the left
-            pipuck.epuck.set_motor_speeds(-speed, speed)
-            time.sleep(0.5)
+            desired_angle = angle + 180 % 360
+            while angle > desired_angle + 5 or angle < desired_angle - 5:
+                pipuck.epuck.set_motor_speeds(-speed, speed)
+                time.sleep(0.1)
+                # get the new position
+                x, y, angle = get_position()
             # move forward
             pipuck.epuck.set_motor_speeds(speed, speed)
             time.sleep(0.5)
