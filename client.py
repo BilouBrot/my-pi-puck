@@ -9,7 +9,7 @@ Port = 1883 # standard MQTT port
 pi_puck_id = '16'
 x_bound = 2.0
 y_bound = 1.0
-new_message = True
+new_message = [True]
 
 puck_dict = {}
 
@@ -27,7 +27,7 @@ def on_message(client, userdata, msg):
             # Check if the message is a dictionary
             puck_dict.update(data)
         elif msg.topic == f"robot/{pi_puck_id}":
-            new_message = True
+            new_message[0] = True
     except json.JSONDecodeError:
         print(f'invalid json: {msg.payload}')
 
@@ -89,7 +89,7 @@ for i in range(5000):
     # TODO: Do your stuff here
     # Print the updated dictionary
     print(f"Updated puck_dict: {puck_dict}")
-    if new_message:
+    if new_message[0]:
         # blink = 4
         # if blink % 2 == 0:
         #     pipuck.set_leds_rgb(red = False, green = True, blue = False)
@@ -99,7 +99,7 @@ for i in range(5000):
         # if blink == 0:
         #     new_message -= 1
         pipuck.set_leds_rgb(red = True, green = False, blue = False)
-        new_message = False
+        new_message[0] = False
     else:
         pipuck.set_leds_rgb(red = False, green = False, blue = False)
     # Get the current position of the robot
