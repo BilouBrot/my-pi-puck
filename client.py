@@ -110,11 +110,13 @@ for i in range(99999):
                 print(f"Collision with robot {collision[1]} detected!")
             # turn to the left
             desired_angle = angle + 180 % 360
+            print(f"Desired angle: {desired_angle}, Current angle: {angle}")
             while angle > desired_angle + 5 or angle < desired_angle - 5:
                 pipuck.epuck.set_motor_speeds(-speed, speed)
                 time.sleep(0.1)
                 # get the new position
                 x, y, angle = get_position()
+                print(f"Current angle: {angle}")
             # move forward
             pipuck.epuck.set_motor_speeds(speed, speed)
             time.sleep(0.5)
