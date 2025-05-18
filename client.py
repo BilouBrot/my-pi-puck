@@ -10,6 +10,7 @@ pi_puck_id = '16'
 x_bound = 2.0
 y_bound = 1.0
 new_message = [True]
+speed = 100
 
 puck_dict = {}
 
@@ -44,7 +45,7 @@ client.loop_start() # Start listening loop in separate thread
 pipuck = PiPuck(epuck_version=2)
 
 # Set the robot's speed, e.g. with
-# pipuck.epuck.set_motor_speeds(1000,-1000)
+# pipuck.epuck.set_motor_speeds(speed,-speed)
 
 def check_bounds(x, y, radius = 0.0):
     if x < 0 + radius or x > x_bound - radius:
@@ -117,19 +118,20 @@ for i in range(99999):
                 client.publish(f"robot/{collision[1]}", "Hello")
                 print(f"Collision with robot {collision[1]} detected!")
             # turn to the left
-            pipuck.epuck.set_motor_speeds(-1000, 1000)
+            pipuck.epuck.set_motor_speeds(-speed, speed)
             time.sleep(0.5)
             # move forward
-            pipuck.epuck.set_motor_speeds(1000, 1000)
+            pipuck.epuck.set_motor_speeds(speed, speed)
+            time.sleep(0.5)
             
         else:
             if i % 100 == 0:
                 # turn to the left
-                pipuck.epuck.set_motor_speeds(-1000, 1000)
+                pipuck.epuck.set_motor_speeds(-speed, speed)
             if i % 100 == 50:
                 # turn to the right
-                pipuck.epuck.set_motor_speeds(1000, -1000)
-            pipuck.epuck.set_motor_speeds(1000, 1000)
+                pipuck.epuck.set_motor_speeds(speed, -speed)
+            pipuck.epuck.set_motor_speeds(speed, speed)
     else:
         # If no position data, stop the robot
         pipuck.epuck.set_motor_speeds(0, 0)
