@@ -88,7 +88,7 @@ for i in range(5000):
     # TODO: Do your stuff here
     # Print the updated dictionary
     print(f"Updated puck_dict: {puck_dict}")
-    pipuck.pipuck.set_leds_rgb(red = True, green = False, blue = False)
+    pipuck.set_leds_rgb(red = True, green = False, blue = False)
     # Get the current position of the robot
     x, y = get_position()
     print(f"Current position: {x}, {y}")
