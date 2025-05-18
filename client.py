@@ -85,7 +85,7 @@ def get_position():
     
 # blink = 0
 
-while True:
+for i in range(99999):
     # TODO: Do your stuff here
     # Print the updated dictionary
     print(f"Updated puck_dict: {puck_dict}")
