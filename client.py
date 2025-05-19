@@ -128,12 +128,15 @@ for i in range(99999):
             time.sleep(0.5)
             
         else:
-            if i % 100 == 0:
+            if i % 50 == 0:
                 # turn to the left
                 pipuck.epuck.set_motor_speeds(-speed, speed)
-            if i % 100 == 50:
+            elif i % 50 == 25:
                 # turn to the right
                 pipuck.epuck.set_motor_speeds(speed, -speed)
+            else:
+                # move forward
+                pipuck.epuck.set_motor_speeds(speed, speed)
     else:
         # If no position data, stop the robot
         pipuck.epuck.set_motor_speeds(0, 0)
