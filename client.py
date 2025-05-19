@@ -135,10 +135,10 @@ for i in range(9999999):
         # Move towards the target pipuck
         target_x, target_y, target_angle = get_position(target_pipuck_id)
         if target_x is not None and target_y is not None:
-            target_angle = math.degrees(math.atan2(target_y - y, target_x - x))
-            print(f"1st Target Angle: {target_angle}")
+            angle1 = math.degrees(math.atan2(target_y - y, target_x - x))
+            print(f"1st Target Angle: {angle1}")
             # now get the angle from the y-axis to the target
-            target_angle = (-target_angle + 90) % 360
+            target_angle = (-angle1 + 90) % 360
             print(f"2nd Target Angle: {target_angle}")
             # turn towards the target
             if not (target_angle > angle + 15 or target_angle < angle - 15):
@@ -147,9 +147,9 @@ for i in range(9999999):
             else:
                 # Turn towards the target
                 if target_angle > angle:
-                    pipuck.epuck.set_motor_speeds(-speed, speed)
-                else:
                     pipuck.epuck.set_motor_speeds(speed, -speed)
+                else:
+                    pipuck.epuck.set_motor_speeds(-speed, speed)
         else:
             current_state = STATE_IDLE
             target_pipuck_id = None
