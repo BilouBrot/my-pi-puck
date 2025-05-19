@@ -89,59 +89,42 @@ def get_position():
 # battery = pipuck.get_battery_state()
 # print(f"Charging?: {battery[0]}, Battery Voltage: {battery[1]}V, Battery percentage: {battery[2]}%")
 
+# At the top of your code, define states
+STATE_IDLE = 0
+STATE_TURNING = 1
+STATE_MOVING = 2
+current_state = STATE_IDLE
+target_angle = 0
+
+# Then in your main loop:
 for i in range(99999):
-    # TODO: Do your stuff here
-    # Print the updated dictionary
-    if new_message[0]:
-        pipuck.set_leds_rgb(red = True, green = False, blue = False)
-        new_message[0] = False
-    else:
-        pipuck.set_leds_rgb(red = False, green = False, blue = False)
-    # Get the current position of the robot
+    # Process MQTT and update position first
     x, y, angle = get_position()
-    # drive randomly
-    if x is not None and y is not None:
-        
-        collision = collsion_detected(x, y, radius=0.1)
-        
-        if collision[0]:
-            print(f"Collision detected at position: {x}, {y}")
-            if collision[1] is not None:
-                # send message "Hello" to topic robot/<key>
-                client.publish(f"robot/{collision[1]}", "Hello")
-                print(f"Collision with robot {collision[1]} detected!")
-            # turn to the left
-            desired_angle = (angle + 180) % 360
-            print(f"Desired angle: {desired_angle}, Current angle: {angle}")
-            pipuck.epuck.set_motor_speeds(-speed, speed)
-            while angle > desired_angle + 15 or angle < desired_angle - 15:
-                time.sleep(0.2)
-                # get the new position
-                x, y, angle = get_position()
-                print(f"Current angle: {angle}")
-            # move forward
-            x, y, angle = get_position()
-            pipuck.epuck.set_motor_speeds(speed, speed)
-            while collsion_detected(x, y, radius=0.1)[0]:
-                time.sleep(0.2)
-                x, y, angle = get_position()
-            time.sleep(0.5)
-            
-        else:
-            if i % 50 == 0:
-                # turn to the left
-                pipuck.epuck.set_motor_speeds(-speed, speed)
-            elif i % 50 == 25:
-                # turn to the right
-                pipuck.epuck.set_motor_speeds(speed, -speed)
-            else:
-                # move forward
-                pipuck.epuck.set_motor_speeds(speed, speed)
-    else:
-        # If no position data, stop the robot
-        pipuck.epuck.set_motor_speeds(0, 0)
     
-    time.sleep(0.3)
+    if current_state == STATE_IDLE:
+        # Your normal behavior when idle
+        if collsion_detected(x, y, radius=0.1)[0]:
+            # Start turning state
+            target_angle = (angle + 180) % 360
+            current_state = STATE_TURNING
+            pipuck.epuck.set_motor_speeds(-speed, speed)
+    
+    elif current_state == STATE_TURNING:
+        # Check if we've reached the desired angle
+        if not (angle > target_angle + 15 or angle < target_angle - 15):
+            # Transition to moving state
+            current_state = STATE_MOVING
+            pipuck.epuck.set_motor_speeds(speed, speed)
+        else:
+            # Continue turning
+            pipuck.epuck.set_motor_speeds(-speed, speed)
+    
+    elif current_state == STATE_MOVING:
+        # Check if we've moved enough or detected a collision
+        if not collsion_detected(x, y, radius=0.1)[0]:
+            current_state = STATE_IDLE
+    
+    time.sleep(0.1)
 	
     
 # Stop the MQTT client loop
