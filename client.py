@@ -101,28 +101,29 @@ for i in range(99999):
     # Process MQTT and update position first
     x, y, angle = get_position()
     
-    if current_state == STATE_IDLE:
-        # Your normal behavior when idle
-        if collsion_detected(x, y, radius=0.1)[0]:
-            # Start turning state
-            target_angle = (angle + 180) % 360
-            current_state = STATE_TURNING
-            pipuck.epuck.set_motor_speeds(-speed, speed)
-    
-    elif current_state == STATE_TURNING:
-        # Check if we've reached the desired angle
-        if not (angle > target_angle + 15 or angle < target_angle - 15):
-            # Transition to moving state
-            current_state = STATE_MOVING
-            pipuck.epuck.set_motor_speeds(speed, speed)
-        else:
-            # Continue turning
-            pipuck.epuck.set_motor_speeds(-speed, speed)
-    
-    elif current_state == STATE_MOVING:
-        # Check if we've moved enough or detected a collision
-        if not collsion_detected(x, y, radius=0.1)[0]:
-            current_state = STATE_IDLE
+    if x is None or y is None or angle is None:
+        if current_state == STATE_IDLE:
+            # Your normal behavior when idle
+            if collsion_detected(x, y, radius=0.1)[0]:
+                # Start turning state
+                target_angle = (angle + 180) % 360
+                current_state = STATE_TURNING
+                pipuck.epuck.set_motor_speeds(-speed, speed)
+        
+        elif current_state == STATE_TURNING:
+            # Check if we've reached the desired angle
+            if not (angle > target_angle + 15 or angle < target_angle - 15):
+                # Transition to moving state
+                current_state = STATE_MOVING
+                pipuck.epuck.set_motor_speeds(speed, speed)
+            else:
+                # Continue turning
+                pipuck.epuck.set_motor_speeds(-speed, speed)
+        
+        elif current_state == STATE_MOVING:
+            # Check if we've moved enough or detected a collision
+            if not collsion_detected(x, y, radius=0.1)[0]:
+                current_state = STATE_IDLE
     
     time.sleep(0.1)
 	
