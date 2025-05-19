@@ -170,8 +170,12 @@ for i in range(9999999):
                 print(f"New target: {target_pipuck_id}")
         else:
             current_state = STATE_IDLE
-            target_pipuck_id = None
-            pipuck.epuck.set_motor_speeds(speed, speed)
+            pipuck.epuck.set_motor_speeds(0, 0)
+            old_target_pipuck_id = target_pipuck_id
+            target_pipuck_id = random.choice(list(puck_dict.keys()))
+            while target_pipuck_id == pi_puck_id or target_pipuck_id == old_target_pipuck_id:
+                target_pipuck_id = random.choice(list(puck_dict.keys()))
+            print(f"New target: {target_pipuck_id}")
 
     elif current_state == STATE_RANDOM:
         # Randomly choose a direction to turn
