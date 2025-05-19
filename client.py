@@ -6,7 +6,7 @@ from pipuck.pipuck import PiPuck
 # Define variables and callbacks
 Broker = "192.168.178.56"  # Replace with your broker address
 Port = 1883 # standard MQTT port
-pi_puck_id = '16'
+pi_puck_id = '17'
 x_bound = 2.0
 y_bound = 1.0
 new_message = [True]
@@ -85,10 +85,12 @@ def get_position():
         print(f"No data for PiPuck ID: {pi_puck_id}")
     return None, None, None
 
+battery = pipuck.get_battery_state()
+print(f"Charging?: {battery[0]}, Battery Voltage: {battery[1]}V, Battery percentage: {battery[2]}%")
+
 for i in range(99999):
     # TODO: Do your stuff here
     # Print the updated dictionary
-    # print(f"Updated puck_dict: {puck_dict}")
     if new_message[0]:
         pipuck.set_leds_rgb(red = True, green = False, blue = False)
         new_message[0] = False
@@ -96,7 +98,6 @@ for i in range(99999):
         pipuck.set_leds_rgb(red = False, green = False, blue = False)
     # Get the current position of the robot
     x, y, angle = get_position()
-    # print(f"Current position: {x}, {y}")
     # drive randomly
     if x is not None and y is not None:
         
@@ -111,14 +112,19 @@ for i in range(99999):
             # turn to the left
             desired_angle = angle + 180 % 360
             print(f"Desired angle: {desired_angle}, Current angle: {angle}")
-            while angle > desired_angle + 5 or angle < desired_angle - 5:
+            current_angle = angle
+            while current_angle > desired_angle + 15 or current_angle < desired_angle - 15:
                 pipuck.epuck.set_motor_speeds(-speed, speed)
-                time.sleep(0.1)
+                time.sleep(0.2)
                 # get the new position
-                x, y, angle = get_position()
+                x, y, current_angle = get_position()
                 print(f"Current angle: {angle}")
             # move forward
-            pipuck.epuck.set_motor_speeds(speed, speed)
+            x, y, angle = get_position()
+            while collision_detected(x, y, radius=0.05)[0]:
+                pipuck.epuck.set_motor_speeds(speed, speed)
+                time.sleep(0.2)
+                x, y, angle = get_position()
             time.sleep(0.5)
             
         else:
@@ -128,7 +134,6 @@ for i in range(99999):
             if i % 100 == 50:
                 # turn to the right
                 pipuck.epuck.set_motor_speeds(speed, -speed)
-            pipuck.epuck.set_motor_speeds(speed, speed)
     else:
         # If no position data, stop the robot
         pipuck.epuck.set_motor_speeds(0, 0)
