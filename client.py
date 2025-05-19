@@ -150,6 +150,17 @@ for i in range(9999999):
                     pipuck.epuck.set_motor_speeds(speed, -speed)
                 else:
                     pipuck.epuck.set_motor_speeds(-speed, speed)
+            if collsion_detected(x, y, radius=0.1)[0]:
+                # Start turning state
+                target_angle = (angle + 180) % 360
+                current_state = STATE_TURNING
+                pipuck.epuck.set_motor_speeds(-speed, speed)
+            # Check if we've reached the target
+            if abs(target_x - x) < 0.1 and abs(target_y - y) < 0.1:
+                # Stop moving towards the target
+                current_state = STATE_IDLE
+                pipuck.epuck.set_motor_speeds(0, 0)
+                target_pipuck_id = None
         else:
             current_state = STATE_IDLE
             target_pipuck_id = None
