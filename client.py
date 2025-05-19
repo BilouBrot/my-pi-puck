@@ -2,6 +2,7 @@ import paho.mqtt.client as mqtt
 import json
 import time
 from pipuck.pipuck import PiPuck
+import random
 
 # Define variables and callbacks
 Broker = "192.168.178.56"  # Replace with your broker address
@@ -93,6 +94,7 @@ def get_position():
 STATE_IDLE = 0
 STATE_TURNING = 1
 STATE_MOVING = 2
+STATE_RANDOM = 3
 current_state = STATE_IDLE
 target_angle = 0
 
@@ -112,7 +114,18 @@ for i in range(99999):
             target_angle = (angle + 180) % 360
             current_state = STATE_TURNING
             pipuck.epuck.set_motor_speeds(-speed, speed)
-    
+        else:
+            random_direction = random.randint(0, 3)
+            if random_direction == 0:
+                current_state = STATE_RANDOM
+
+    elif current_state == STATE_RANDOM:
+        # Randomly choose a direction to turn
+        random_direction = random.randint(0, 1)
+        if random_direction == 0:
+            pipuck.epuck.set_motor_speeds(speed, -speed)
+        elif random_direction == 1:
+            pipuck.epuck.set_motor_speeds(-speed, speed)
     elif current_state == STATE_TURNING:
         # Check if we've reached the desired angle
         if not (angle > target_angle + 15 or angle < target_angle - 15):
