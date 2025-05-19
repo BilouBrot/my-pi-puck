@@ -3,6 +3,7 @@ import json
 import time
 from pipuck.pipuck import PiPuck
 import random
+import math
 
 # Define variables and callbacks
 Broker = "192.168.178.56"  # Replace with your broker address
@@ -132,7 +133,7 @@ for i in range(9999999):
         # Move towards the target pipuck
         target_x, target_y, target_angle = get_position(target_pipuck_id)
         if target_x is not None and target_y is not None:
-            angle_to_target = (180 + (180 / 3.14) * (target_y - y) / ((target_x - x) ** 2 + (target_y - y) ** 2) ** 0.5) % 360
+            angle_to_target = math.degrees(math.atan2(target_y - y, target_x - x))
             if abs(angle_to_target - angle) < 15:
                 pipuck.epuck.set_motor_speeds(speed, speed)
             else:
