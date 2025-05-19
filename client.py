@@ -135,9 +135,11 @@ for i in range(9999999):
         # Move towards the target pipuck
         target_x, target_y, target_angle = get_position(target_pipuck_id)
         if target_x is not None and target_y is not None:
-            # target_angle to the y-axis
             target_angle = math.degrees(math.atan2(target_y - y, target_x - x))
-            print(f"Target Angle: {target_angle}")
+            print(f"1st Target Angle: {target_angle}")
+            # now get the angle from the y-axis to the target
+            target_angle = (target_angle + 90) % 360
+            print(f"2nd Target Angle: {target_angle}")
         else:
             current_state = STATE_IDLE
             target_pipuck_id = None
