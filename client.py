@@ -138,7 +138,7 @@ for i in range(9999999):
             target_angle = math.degrees(math.atan2(target_y - y, target_x - x))
             print(f"1st Target Angle: {target_angle}")
             # now get the angle from the y-axis to the target
-            target_angle = (target_angle + 90) % 360
+            target_angle = (-target_angle + 90) % 360
             print(f"2nd Target Angle: {target_angle}")
         else:
             current_state = STATE_IDLE
