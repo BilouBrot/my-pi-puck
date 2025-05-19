@@ -85,8 +85,8 @@ def get_position():
         print(f"No data for PiPuck ID: {pi_puck_id}")
     return None, None, None
 
-battery = pipuck.get_battery_state()
-print(f"Charging?: {battery[0]}, Battery Voltage: {battery[1]}V, Battery percentage: {battery[2]}%")
+# battery = pipuck.get_battery_state()
+# print(f"Charging?: {battery[0]}, Battery Voltage: {battery[1]}V, Battery percentage: {battery[2]}%")
 
 for i in range(99999):
     # TODO: Do your stuff here
