@@ -101,7 +101,7 @@ for i in range(99999):
     # drive randomly
     if x is not None and y is not None:
         
-        collision = collsion_detected(x, y, radius=0.05)
+        collision = collsion_detected(x, y, radius=0.1)
         
         if collision[0]:
             print(f"Collision detected at position: {x}, {y}")
@@ -121,7 +121,7 @@ for i in range(99999):
                 print(f"Current angle: {current_angle}")
             # move forward
             x, y, angle = get_position()
-            while collsion_detected(x, y, radius=0.05)[0]:
+            while collsion_detected(x, y, radius=0.1)[0]:
                 pipuck.epuck.set_motor_speeds(speed, speed)
                 time.sleep(0.2)
                 x, y, angle = get_position()
