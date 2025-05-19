@@ -141,7 +141,7 @@ for i in range(9999999):
             target_angle = (-angle1 + 90) % 360
             print(f"2nd Target Angle: {target_angle}")
             # turn towards the target
-            if not (target_angle > angle + 15 or target_angle < angle - 15):
+            if not (target_angle > angle + 10 or target_angle < angle - 10):
                 # Move towards the target
                 pipuck.epuck.set_motor_speeds(speed, speed)
             else:
