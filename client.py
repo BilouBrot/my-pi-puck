@@ -26,6 +26,7 @@ def on_message(client, userdata, msg):
         data = json.loads(msg.payload.decode())
         if msg.topic == "robot_pos/all":
             # Check if the message is a dictionary
+            print(f"Received message: {data}")
             puck_dict.update(data)
         elif msg.topic == f"robot/{pi_puck_id}":
             new_message[0] = True
