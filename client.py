@@ -118,7 +118,6 @@ for i in range(9999999):
             # Start turning state
             target_angle = (angle + 180) % 360
             current_state = STATE_TURNING
-            pipuck.epuck.set_motor_speeds(-speed, speed)
         elif target_pipuck_id is not None:
             t_x, t_y, t_angle = get_position(target_pipuck_id)
             if t_x is not None and t_y is not None:
@@ -145,11 +144,6 @@ for i in range(9999999):
                 # Move towards the target
                 pipuck.epuck.set_motor_speeds(speed, speed)
             else:
-                # Turn towards the target
-                if target_angle > angle:
-                    pipuck.epuck.set_motor_speeds(-speed, speed)
-                else:
-                    pipuck.epuck.set_motor_speeds(speed, -speed)
                 current_state = STATE_TURNING
         else:
             current_state = STATE_IDLE
