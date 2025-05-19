@@ -112,17 +112,16 @@ for i in range(99999):
             # turn to the left
             desired_angle = (angle + 180) % 360
             print(f"Desired angle: {desired_angle}, Current angle: {angle}")
-            current_angle = angle
-            while current_angle > desired_angle + 15 or current_angle < desired_angle - 15:
-                pipuck.epuck.set_motor_speeds(-speed, speed)
+            pipuck.epuck.set_motor_speeds(-speed, speed)
+            while angle > desired_angle + 15 or angle < desired_angle - 15:
                 time.sleep(0.2)
                 # get the new position
-                x, y, current_angle = get_position()
-                print(f"Current angle: {current_angle}")
+                x, y, angle = get_position()
+                print(f"Current angle: {angle}")
             # move forward
             x, y, angle = get_position()
+            pipuck.epuck.set_motor_speeds(speed, speed)
             while collsion_detected(x, y, radius=0.1)[0]:
-                pipuck.epuck.set_motor_speeds(speed, speed)
                 time.sleep(0.2)
                 x, y, angle = get_position()
             time.sleep(0.5)
