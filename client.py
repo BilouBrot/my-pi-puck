@@ -74,8 +74,8 @@ def collsion_detected(x, y, radius = 0.0):
                     return True, key
     return False, None
 
-def get_position():
-    data = puck_dict.get(pi_puck_id)
+def get_position(id=pi_puck_id):
+    data = puck_dict.get(id)
     if data:
         pos = data.get('position')
         if pos:
@@ -84,7 +84,7 @@ def get_position():
             angle = data.get('angle')
             return x, y, angle
     else:
-        print(f"No data for PiPuck ID: {pi_puck_id}")
+        print(f"No data for PiPuck ID: {id}")
     return None, None, None
 
 # battery = pipuck.get_battery_state()
@@ -95,11 +95,13 @@ STATE_IDLE = 0
 STATE_TURNING = 1
 STATE_MOVING = 2
 STATE_RANDOM = 3
+STATE_TARGET = 4
 current_state = STATE_IDLE
 target_angle = 0
+target_pipuck_id = '44'
 
 # Then in your main loop:
-for i in range(99999):
+for i in range(9999999):
     # Process MQTT and update position first
     x, y, angle = get_position()
     
@@ -114,10 +116,33 @@ for i in range(99999):
             target_angle = (angle + 180) % 360
             current_state = STATE_TURNING
             pipuck.epuck.set_motor_speeds(-speed, speed)
+        elif target_pipuck_id is not None:
+            target_x, target_y, target_angle = get_position(target_pipuck_id)
+            if target_x is not None and target_y is not None:
+                if check_bounds(target_x, target_y):
+                    # Move towards the target pipuck
+                    current_state = STATE_TARGET
+                    pipuck.epuck.set_motor_speeds(speed, speed)
         else:
             random_direction = random.randint(0, 3)
             if random_direction == 0:
                 current_state = STATE_RANDOM
+
+    elif current_state == STATE_TARGET:
+        # Move towards the target pipuck
+        target_x, target_y, target_angle = get_position(target_pipuck_id)
+        if target_x is not None and target_y is not None:
+            angle_to_target = (180 + (180 / 3.14) * (target_y - y) / ((target_x - x) ** 2 + (target_y - y) ** 2) ** 0.5) % 360
+            if abs(angle_to_target - angle) < 15:
+                pipuck.epuck.set_motor_speeds(speed, speed)
+            else:
+                target_angle = angle_to_target
+                current_state = STATE_TURNING
+                pipuck.epuck.set_motor_speeds(-speed, speed)
+        else:
+            current_state = STATE_IDLE
+            target_pipuck_id = None
+            pipuck.epuck.set_motor_speeds(speed, speed)
 
     elif current_state == STATE_RANDOM:
         # Randomly choose a direction to turn
@@ -129,6 +154,7 @@ for i in range(99999):
         elif random_direction == 2:
             current_state = STATE_IDLE
             pipuck.epuck.set_motor_speeds(speed, speed)
+            
     elif current_state == STATE_TURNING:
         # Check if we've reached the desired angle
         if not (angle > target_angle + 15 or angle < target_angle - 15):
