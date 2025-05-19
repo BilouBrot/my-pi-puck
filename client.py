@@ -148,10 +148,11 @@ for i in range(9999999):
                 # Turn towards the target
                 # Calculate the smallest difference between angles (handling wrap-around)
                 angle_diff = (target_angle - angle + 540) % 360 - 180
+                turn_speed = max(3 * abs(angle_diff), 100)
                 if angle_diff > 0:
-                    pipuck.epuck.set_motor_speeds(angle_diff * 3, -(angle_diff * 3))
+                    pipuck.epuck.set_motor_speeds(turn_speed, -turn_speed)
                 else:
-                    pipuck.epuck.set_motor_speeds(-(angle_diff * 3), angle_diff * 3)
+                    pipuck.epuck.set_motor_speeds(-turn_speed, turn_speed)
             if collsion_detected(x, y, radius=0.1)[0]:
                 # Start turning state
                 target_angle = (angle + 180) % 360
