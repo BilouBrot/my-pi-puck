@@ -118,7 +118,7 @@ for i in range(99999):
                 time.sleep(0.2)
                 # get the new position
                 x, y, current_angle = get_position()
-                print(f"Current angle: {angle}")
+                print(f"Current angle: {current_angle}")
             # move forward
             x, y, angle = get_position()
             while collsion_detected(x, y, radius=0.05)[0]:
