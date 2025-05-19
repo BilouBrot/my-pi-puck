@@ -162,7 +162,11 @@ for i in range(9999999):
                 # Stop moving towards the target
                 current_state = STATE_IDLE
                 pipuck.epuck.set_motor_speeds(0, 0)
-                target_pipuck_id = None
+                # get random new target
+                target_pipuck_id = random.choice(list(puck_dict.keys()))
+                while target_pipuck_id == pi_puck_id:
+                    target_pipuck_id = random.choice(list(puck_dict.keys()))
+                print(f"New target: {target_pipuck_id}")
         else:
             current_state = STATE_IDLE
             target_pipuck_id = None
