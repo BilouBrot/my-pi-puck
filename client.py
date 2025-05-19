@@ -121,11 +121,14 @@ for i in range(99999):
 
     elif current_state == STATE_RANDOM:
         # Randomly choose a direction to turn
-        random_direction = random.randint(0, 1)
+        random_direction = random.randint(0, 2)
         if random_direction == 0:
             pipuck.epuck.set_motor_speeds(speed, -speed)
         elif random_direction == 1:
             pipuck.epuck.set_motor_speeds(-speed, speed)
+        elif random_direction == 2:
+            current_state = STATE_IDLE
+            pipuck.epuck.set_motor_speeds(speed, speed)
     elif current_state == STATE_TURNING:
         # Check if we've reached the desired angle
         if not (angle > target_angle + 15 or angle < target_angle - 15):
