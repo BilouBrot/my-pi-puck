@@ -148,7 +148,7 @@ for i in range(9999999):
                 # Turn towards the target
                 # Calculate the smallest difference between angles (handling wrap-around)
                 angle_diff = (target_angle - angle + 540) % 360 - 180
-                turn_speed = max(3 * abs(angle_diff), 100)
+                turn_speed = max(5 * abs(angle_diff), 100)
                 if angle_diff > 0:
                     pipuck.epuck.set_motor_speeds(turn_speed, -turn_speed)
                 else:
