@@ -118,6 +118,7 @@ for i in range(9999999):
             # Start turning state
             target_angle = (angle + 180) % 360
             current_state = STATE_TURNING
+            pipuck.epuck.set_motor_speeds(-speed, speed)
         elif target_pipuck_id is not None:
             t_x, t_y, t_angle = get_position(target_pipuck_id)
             if t_x is not None and t_y is not None:
@@ -144,7 +145,11 @@ for i in range(9999999):
                 # Move towards the target
                 pipuck.epuck.set_motor_speeds(speed, speed)
             else:
-                current_state = STATE_TURNING
+                # Turn towards the target
+                if target_angle > angle:
+                    pipuck.epuck.set_motor_speeds(-speed, speed)
+                else:
+                    pipuck.epuck.set_motor_speeds(speed, -speed)
         else:
             current_state = STATE_IDLE
             target_pipuck_id = None
@@ -168,11 +173,8 @@ for i in range(9999999):
             current_state = STATE_MOVING
             pipuck.epuck.set_motor_speeds(speed, speed)
         else:
-            # Turn towards the target
-            if target_angle > angle:
-                pipuck.epuck.set_motor_speeds(-speed, speed)
-            else:
-                pipuck.epuck.set_motor_speeds(speed, -speed)
+            # Continue turning
+            pipuck.epuck.set_motor_speeds(-speed, speed)
     
     elif current_state == STATE_MOVING:
         # Check if we've moved enough or detected a collision
