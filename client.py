@@ -99,6 +99,8 @@ STATE_TARGET = 4
 current_state = STATE_IDLE
 target_angle = 0
 target_pipuck_id = '44'
+target_x = None
+target_y = None
 
 # Then in your main loop:
 for i in range(9999999):
@@ -118,9 +120,9 @@ for i in range(9999999):
             current_state = STATE_TURNING
             pipuck.epuck.set_motor_speeds(-speed, speed)
         elif target_pipuck_id is not None:
-            target_x, target_y, target_angle = get_position(target_pipuck_id)
-            if target_x is not None and target_y is not None:
-                if check_bounds(target_x, target_y):
+            t_x, t_y, t_angle = get_position(target_pipuck_id)
+            if t_x is not None and t_y is not None:
+                if check_bounds(t_x, t_y):
                     # Move towards the target pipuck
                     current_state = STATE_TARGET
                     pipuck.epuck.set_motor_speeds(speed, speed)
@@ -133,13 +135,9 @@ for i in range(9999999):
         # Move towards the target pipuck
         target_x, target_y, target_angle = get_position(target_pipuck_id)
         if target_x is not None and target_y is not None:
-            angle_to_target = math.degrees(math.atan2(target_y - y, target_x - x))
-            if abs(angle_to_target - angle) < 15:
-                pipuck.epuck.set_motor_speeds(speed, speed)
-            else:
-                target_angle = angle_to_target
-                current_state = STATE_TURNING
-                pipuck.epuck.set_motor_speeds(-speed, speed)
+            # target_angle to the y-axis
+            target_angle = math.degrees(math.atan2(target_y - y, target_x - x))
+            print(f"Target Angle: {target_angle}")
         else:
             current_state = STATE_IDLE
             target_pipuck_id = None
