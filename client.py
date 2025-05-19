@@ -110,7 +110,7 @@ for i in range(99999):
                 client.publish(f"robot/{collision[1]}", "Hello")
                 print(f"Collision with robot {collision[1]} detected!")
             # turn to the left
-            desired_angle = angle + 180 % 360
+            desired_angle = (angle + 180) % 360
             print(f"Desired angle: {desired_angle}, Current angle: {angle}")
             current_angle = angle
             while current_angle > desired_angle + 15 or current_angle < desired_angle - 15:
