@@ -12,7 +12,7 @@ pi_puck_id = '17'
 x_bound = 2.0
 y_bound = 1.0
 new_message = [True]
-speed = 200
+speed = 400
 
 puck_dict = {}
 
