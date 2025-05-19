@@ -27,7 +27,6 @@ def on_message(client, userdata, msg):
         data = json.loads(msg.payload.decode())
         if msg.topic == "robot_pos/all":
             # Check if the message is a dictionary
-            print(f"Received message: {data}")
             puck_dict.update(data)
         elif msg.topic == f"robot/{pi_puck_id}":
             new_message[0] = True
@@ -104,6 +103,7 @@ target_pipuck_id = '44'
 for i in range(9999999):
     # Process MQTT and update position first
     x, y, angle = get_position()
+    print(f"Current State: {current_state}, Position: ({x}, {y}), Angle: {angle}")
     
     if x is None or y is None or angle is None:
         print("Waiting for position data...")
